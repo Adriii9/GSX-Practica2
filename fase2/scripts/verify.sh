@@ -1,42 +1,43 @@
 #!/bin/bash
 
-echo "--- Iniciando Verificación del Entorno ---"
+# --- IMPORTANTE: Ir a la carpeta raíz de fase2 para leer el .env y docker-compose.yml ---
+cd "$(dirname "$0")/.."
+
+echo "--- 🔍 Verificando el estado de la Orquestación ---"
 export GREEN='\033[0;32m'
 export RED='\033[0;31m'
 export NC='\033[0m' # No Color
 
-# 1. Verificar si Docker está corriendo
-if systemctl is-active --quiet docker; then
-    echo -e "${GREEN}[OK]${NC} El servicio Docker está funcionando."
+# 1. Comprobar estado de los procesos de Compose
+echo "Estado de los contenedores:"
+docker-compose ps
+
+# 2. Verificar que ambos servicios están "Up"
+# Filtramos por el estado "Up" y contamos si hay 2
+UP_COUNT=$(docker-compose ps | grep -c "Up")
+
+if [ "$UP_COUNT" -eq 2 ]; then
+    echo -e "${GREEN}[OK]${NC} Todos los servicios están corriendo correctamente."
 else
-    echo -e "${RED}[ERROR]${NC} Docker no está arrancado."
+    echo -e "${RED}[ERROR]${NC} Se esperaban 2 contenedores activos, pero hay $UP_COUNT."
+    echo "Revisa 'docker-compose logs' para ver qué ha fallado."
 fi
 
-# 2. Verificar contenedores activos
-for container in "nginx-web" "app-node"
-do
-    if [ "$(docker inspect -f '{{.State.Running}}' $container 2>/dev/null)" == "true" ]; then
-        echo -e "${GREEN}[OK]${NC} Contenedor '$container' está en ejecución."
-    else
-        echo -e "${RED}[ERROR]${NC} Contenedor '$container' no encontrado o detenido."
-    fi
-done
+# 3. Pruebas de conectividad
+echo "--- Probando respuestas HTTP ---"
 
-# 3. Prueba de conectividad (CURL)
-echo "--- Probando respuestas de red ---"
-
-# Prueba Nginx (Puerto 8080) [cite: 1]
-if curl -s localhost:8080 | grep -q "GreenDevCorp"; then
-    echo -e "${GREEN}[OK]${NC} Nginx responde correctamente en el puerto 8080."
-else
-    echo -e "${RED}[ERROR]${NC} Nginx no responde o el contenido es incorrecto."
-fi
-
-# Prueba App Node (Puerto 3000)
+# Test Backend (Node.js) - Usamos localhost porque está mapeado
 if curl -s localhost:3000 | grep -q "Hello from container"; then
-    echo -e "${GREEN}[OK]${NC} App Node responde correctamente en el puerto 3000."
+    echo -e "${GREEN}[OK]${NC} Backend (Puerto 3000) responde con el mensaje esperado."
 else
-    echo -e "${RED}[ERROR]${NC} App Node no responde."
+    echo -e "${RED}[ERROR]${NC} Backend no responde o el mensaje es incorrecto."
 fi
 
-echo "--- Verificación finalizada ---"
+# Test Frontend (Nginx)
+if curl -s localhost:8080 | grep -q "GreenDevCorp"; then
+    echo -e "${GREEN}[OK]${NC} Frontend (Puerto 8080) sirve la web de GreenDevCorp."
+else
+    echo -e "${RED}[ERROR]${NC} Frontend no responde o no encuentra el index.html."
+fi
+
+echo "--- ✨ Verificación finalizada ---"

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # --- SERVICIO FRONTEND (Nginx) ---
+  web:
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: gsx-nginx-web
+    # Usamos variables del archivo .env
+    ports:
+      - "${PORT_WEB}:8080"
+    # Nivel Intermedio: Persistencia de logs
+    volumes:
+      - nginx_data:/var/log/nginx
+    networks:
+      - gsx-network
+    # Nivel Intermedio: Orden de arranque
+    depends_on:
+      - app
+    restart: always
+
+  # --- SERVICIO BACKEND (Node.js) ---
+  app:
+    build:
+      context: ./simple-app
+      dockerfile: Dockerfile
+    container_name: gsx-app-node
+    ports:
+      - "${PORT_APP}:3000"
+    networks:
+      - gsx-network
+    restart: always
+
+# Definición de Redes y Volúmenes
+networks:
+  gsx-network:
+    driver: bridge
+
+volumes:
+  nginx_data:
+    driver: local
