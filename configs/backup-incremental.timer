@@ -1,0 +1,12 @@
+[Unit]
+Description=Timer pel Backup Incremental (rsync)
+
+[Timer]
+# Ho programem perquè s'executi cada dia a les 02:00 de la matinada
+OnCalendar=*-*-* 02:00:00
+# Si la màquina estava apagada a les 2:00, ho farà just a l'engegar-se
+Persistent=true
+Unit=backup-incremental.service
+
+[Install]
+WantedBy=timers.target

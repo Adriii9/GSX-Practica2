@@ -1,0 +1,17 @@
+[Unit]
+Description=Simulador de Carga Limitada (Week 3)
+
+[Service]
+# Indiquem on és l'script que vam crear abans
+ExecStart=/opt/admin/scripts/workload_simulator.sh
+
+# LÍMITS DE RECURSOS (cgroups v2)
+CPUAccounting=yes
+MemoryAccounting=yes
+# Limitem la CPU a un màxim del 25% d'un nucli
+CPUQuota=25%
+# Limitem la memòria RAM màxima a 100 Megabytes
+MemoryMax=100M
+
+Restart=no
+User=gsx

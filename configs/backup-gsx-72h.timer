@@ -1,0 +1,13 @@
+[Unit]
+Description=Timer pel Backup GSX (Freqüència: 72h)
+
+[Timer]
+# S'executarà * (qualsevol any) * (qualsevol mes) 1/3 (Començant pel dia 1 del mes, fent salts de 3 en 3) a mijanit
+OnCalendar=*-*-1/3 00:00:00
+# Persistent=true fa que si el servidor estava apagat a l'hora programada, 
+# faci el backup immediatament quan s'engegui. Molt útil!
+Persistent=true
+Unit=backup-gsx-72h.service
+
+[Install]
+WantedBy=timers.target

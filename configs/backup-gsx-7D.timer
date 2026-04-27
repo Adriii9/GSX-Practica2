@@ -1,0 +1,13 @@
+[Unit]
+Description=Timer setmanal pel Backup GSX
+
+[Timer]
+# S'executarà cada setmana el dilluns a mitjanit
+OnCalendar=weekly
+# Persistent=true fa que si el servidor estava apagat a l'hora programada, 
+# faci el backup immediatament quan s'engegui. Molt útil!
+Persistent=true
+Unit=backup-gsx-7D.service
+
+[Install]
+WantedBy=timers.target

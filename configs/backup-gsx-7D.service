@@ -1,0 +1,19 @@
+[Unit]
+Description=Servei de Backup de la Infraestructura GSX (Freqüència: 7D)
+
+[Service]
+Type=oneshot
+# Indiquem la ruta absoluta al script
+ExecStart=/opt/admin/scripts/backup_data.sh 7D
+# Systemd l'executarà com a root, de manera que els comandos 'sudo' de dins l'script no demanaran contrasenya
+User=root
+
+# Week 3
+# Forçar Kernel a vigilar el proces
+CPUAccounting=yes
+MemoryAccounting=yes
+# Limitem l'ús de CPU a un màxim del 30% d'un nucli
+CPUQuota=30%
+# Limitem la memòria RAM màxima a 200 Megabytes
+MemoryMax=200M
+

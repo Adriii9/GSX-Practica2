@@ -1,0 +1,14 @@
+[Unit]
+Description=Backup Incremental Diari (rsync) - Week 5
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/admin/scripts/backup_incremental.sh
+User=root
+
+# Afegim límits per evitar que el backup saturi el servidor (com vam fer a la Week 3)
+CPUAccounting=yes
+MemoryAccounting=yes
+CPUQuota=40%
+MemoryMax=300M
