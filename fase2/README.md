@@ -4,7 +4,7 @@
 * [Semana 8: Dockerización (Básico e Intermedio)](#semana-8-dockerización-básico-e-intermedio)
 * [Semana 9: Orquestación con Docker Compose (Básico e Intermedio)](#semana-9-orquestación-con-docker-compose)
 * [Instalación y Verificación](#instalación-y-verificación)
-
+* [Semana 10: Despliegue avanzado con kubernetes (Básico e Intermedio)](#semana-10-despliegue-avanzado-con-kubernetes)
 ---
 
 ## Semana 8: Dockerización (Básico e Intermedio)
@@ -66,3 +66,43 @@ Para facilitar el despliegue, se han creado scripts de automatización en la car
 chmod +x fase2/scripts/*.sh
 ./fase2/scripts/setup.sh
 ./fase2/scripts/verify.sh
+
+
+---
+
+## Semana 10: Despliegue Avanzado con Kubernetes
+
+En esta fase hemos migrado la arquitectura de GreenDevCorp de un entorno basado en Docker Compose a un **Clúster de Kubernetes (K8s)** local utilizando Minikube. El objetivo principal es garantizar la **alta disponibilidad**, la **escalabilidad** y la **resiliencia** de la aplicación web.
+
+### 1. Orquestación Avanzada y Resiliencia
+Se han implementado políticas de auto-recuperación y gestión de estado mediante manifiestos YAML.
+* **Nivel Básico:** Despliegue de los servicios de Nginx y Node.js utilizando controladores de tipo `Deployment` y exposición a través de `Service`.
+* **Nivel Intermedio (Health Checks):** Configuración de sondas `livenessProbe` y `readinessProbe` en los puertos 3000 y 80 para asegurar que el clúster solo envía tráfico a los Pods que están 100% listos para operar.
+* **Nivel Avanzado (Auto-sanado):** Kubernetes monitoriza el estado de los Pods. Se ha demostrado que si el proceso muere, el `ReplicaSet` recrea el contenedor automáticamente en segundos sin intervención humana.
+
+### 2. Gestión de Recursos y Configuración
+* **Nivel Intermedio (Limits & Requests):** Para evitar que un contenedor colapse el servidor anfitrión (`OOMKilled`), se han establecido límites estrictos de CPU y Memoria RAM en la especificación de los manifiestos.
+* **Nivel Intermedio (ConfigMap):** Desacoplamiento de la configuración utilizando un `ConfigMap` para inyectar las variables de entorno al Backend directamente en el clúster, sin necesidad de modificar o reconstruir la imagen de Docker.
+
+### 3. Escalabilidad Horizontal
+* **Nivel Intermedio:** Capacidad demostrada de escalar los Pods de Nginx y Backend dinámicamente para absorber picos de tráfico de forma instantánea, multiplicando el número de réplicas en ejecución.
+
+### 4. Lecciones Aprendidas y Troubleshooting (Requisitos del Sistema)
+Durante el desarrollo, detectamos que los parámetros por defecto de las máquinas virtuales causan cuellos de botella importantes. Para el correcto funcionamiento de Minikube se resolvieron los siguientes retos técnicos:
+* **Gestión de Memoria RAM:** Minikube necesita ~2GB para el "Control Plane". Se detectó que con solo 2GB totales, el sistema lanza errores críticos (`-bash: fork: retry: Resource temporarily unavailable`). Se resolvió ampliando la máquina virtual a **4 GB (4096 MB)**.
+* **Configuración de Red:** La configuración NAT de VirtualBox limitaba la velocidad de descarga. Se configuró un **Adaptador Puente (Bridged Adapter)**, solucionando problemas de TimeOut (`ErrImagePull`) y reduciendo el tiempo de despliegue de las imágenes base a minutos.
+* **Asignación de CPU:** Se asignaron un mínimo de **2 vCPUs** para evitar congestiones en el arranque de los contenedores.
+
+### 5. Estructura del Proyecto y Automatización
+Al igual que en semanas anteriores, todo el proceso de aprovisionamiento ha sido automatizado mediante scripts para lograr un despliegue sin intervención manual ("One-Click Deployment"):
+
+1. **setup_week10.sh:** Instalación de dependencias (Minikube, Kubectl).
+2. **deploy_week10.sh:** Encendido del clúster (utilizando el driver de Docker) y aplicación ordenada de los manifiestos YAML.
+3. **verify_week10.sh:** Batería de pruebas de calidad (QA) que verifica la accesibilidad web externa, la resiliencia (eliminando un pod intencionadamente) y el escalado automático de réplicas.
+
+### Comandos rápidos (Week 10):
+```bash
+chmod +x fase2/scripts/*_week10.sh
+./fase2/scripts/setup_week10.sh
+./fase2/scripts/deploy_week10.sh
+./fase2/scripts/verify_week10.sh
