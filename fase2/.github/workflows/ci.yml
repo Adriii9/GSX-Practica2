@@ -1,0 +1,57 @@
+name: CI Pipeline (Build & Validate)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # 1r JOB: Construir i pujar les imatges a Docker Hub
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout del codi
+      uses: actions/checkout@v3
+
+    - name: Obtenir SHA Curt per al Tag
+      id: vars
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+    - name: Login a Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Backend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./fase2/simple-app
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/simple-app-node:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_USERNAME }}/simple-app-node:latest
+
+    - name: Build and push Nginx
+      uses: docker/build-push-action@v4
+      with:
+        context: ./fase2/nginx
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/nginx-custom:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_USERNAME }}/nginx-custom:latest
+
+  # 2n JOB: Validar que el codi d'infraestructura estigui ben programat
+  terraform-validate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout del codi
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      working-directory: ./fase2/terraform
+      run: terraform init -backend=false
+
+    - name: Terraform Validate
+      working-directory: ./fase2/terraform
+      run: terraform validate
