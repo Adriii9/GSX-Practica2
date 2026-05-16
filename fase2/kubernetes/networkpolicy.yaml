@@ -1,0 +1,31 @@
+# Setmana 12: segmentació interna del clúster amb NetworkPolicies.
+#
+# Aquesta política aplica el principi de mínim privilegi sobre els pods
+# del backend: només accepta trànsit entrant pel port 3000 si prové de
+# pods etiquetats com a "app: nginx". Qualsevol altre origen (altres
+# pods, atacant intern, eines de debug oblidades) queda bloquejat.
+#
+# Important: Minikube per defecte fa servir kindnet, que NO aplica
+# NetworkPolicies. Per veure-la actuar de veritat cal arrencar
+# Minikube amb un CNI compatible:
+#   minikube start --cni=calico
+# El manifest segueix sent vàlid en qualsevol clúster K8s real.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-allow-nginx
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nginx
+      ports:
+        - protocol: TCP
+          port: 3000
