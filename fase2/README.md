@@ -344,7 +344,7 @@ Flujo del test:
 
 Tiempo total medido: alrededor de 2 minutos desde `apply` hasta pods en estado `Running`.
 
-Procedimiento completo, comandos paso a paso y resultados esperados: [`fase2/docs/week13/integration-test.md`](./fase2/docs/week13/integration-test.md).
+Procedimiento completo, comandos paso a paso y resultados esperados: [`fase2/docs/integration-test.md`](./fase2/docs/integration-test.md).
 
 ### 8.2. Challenge C: Documentación operacional
 
@@ -357,9 +357,9 @@ Hemos elaborado documentación pensada para que cualquier persona del equipo pue
 ### 8.3. Challenge D: Reflexión y preparación de la entrevista
 
 - Reflexiones individuales (una por miembro del equipo), de entre 500 y 1000 palabras, donde cada uno cuenta qué le ha resultado más difícil, qué le ha sorprendido, qué haría diferente y qué quiere seguir aprendiendo:
-  - [`fase2/docs/week13/reflection-adria.md`](./fase2/docs/week13/reflection-adria.md)
-  - [`fase2/docs/week13/reflection-pau.md`](./fase2/docs/week13/reflection-pau.md)
-- Preparación de la entrevista oral: notas internas con las preguntas que esperamos defender (por qué Kubernetes en vez de Compose, por qué Alpine, por qué Terraform en vez de Ansible, diferencia entre `livenessProbe` y `readinessProbe`, etc.) y un checklist pre-entrevista. [`fase2/docs/week13/interview-prep.md`](./fase2/docs/week13/interview-prep.md).
+  - [`fase2/docs/reflection-adria.md`](./fase2/docs/reflection-adria.md)
+  - [`fase2/docs/reflection-pau.md`](./fase2/docs/reflection-pau.md)
+
 
 ---
 
@@ -822,9 +822,9 @@ GSX-Practica2/
 │   │   ├── verify_week10.sh
 │   │   └── test_networkpolicy.sh   # Semana 12: test NetworkPolicy
 │   ├── docs/                       # Semana 13: docs específicos
-│   │       ├── integration-test.md
-│   │       ├── reflection-adria.md
-│   │       ├── reflection-pau.md
+│   │   ├── integration-test.md
+│   │   ├── reflection-adria.md
+│   │   ├── reflection-pau.md
 │   └── README.md
 └── README.md                       # README de la Práctica 1
 ```
@@ -833,11 +833,12 @@ GSX-Practica2/
 
 ## 13. Documentación Adicional
 
-El runbook y la guía de troubleshooting están integrados directamente en este README (Secciones 10 y 11). El resto de documentación de la Semana 13 vive en `fase2/docs/week13/`:
+El runbook y la guía de troubleshooting están integrados directamente en este README (Secciones 10 y 11). El resto de documentación de la Semana 13 vive en `fase2/docs/`:
 
-- [`integration-test.md`](./fase2/docs/week13/integration-test.md): test completo de destruir la infraestructura y volver a desplegarla desde cero.
-- [`reflection-adria.md`](./fase2/docs/week13/reflection-adria.md) y [`reflection-pau.md`](./fase2/docs/week13/reflection-pau.md): reflexiones individuales sobre el aprendizaje.
+- [`integration-test.md`](./fase2/docs/integration-test.md): test completo de destruir la infraestructura y volver a desplegarla desde cero.
+- [`reflection-adria.md`](./fase2/docs/reflection-adria.md) y [`reflection-pau.md`](./fase2/docs/reflection-pau.md): reflexiones individuales sobre el aprendizaje.
 
 ---
 
+**Repositorio:** https://github.com/Adriii9/GSX-Practica2
 
